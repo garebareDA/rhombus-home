@@ -95,11 +95,15 @@ loader.load(model,(data) => {
 
   recognition.onresult = (event) => {
     const text = event.results[0][0].transcript;
-    so.emit('message', text);
-    console.log(text);
-    recognition.stop();
-    mixer.stopAllAction();
-    mixer.clipAction(animations[0]).play();
+    if (text.match('ストップ') ){
+      speechSynthesis.cancel();
+    }else{
+      so.emit('message', text);
+      console.log(text);
+      recognition.stop();
+      mixer.stopAllAction();
+      mixer.clipAction(animations[0]).play();
+    }
   }
 
   function helloAnime() {

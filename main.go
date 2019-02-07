@@ -42,9 +42,9 @@ func main(){
 				time.LoadLocation("Asia/Tokyo")
 				hour := time.Now().Hour()
 
-				if hour < 12 && 18 > hour {
+				if hour > 12 && 18 > hour {
 					so.Emit("message", "こんにちは")
-				}else if hour > 18 {
+				}else if 18 > hour {
 					so.Emit("message", "こんにちは, もう暗いですね")
 				}else if hour > 0 {
 					so.Emit("message", "こんにちはまだ昼じゃないですよ")
@@ -54,22 +54,22 @@ func main(){
 				time.LoadLocation("Asia/Tokyo")
 				hour := time.Now().Hour()
 
-				if hour < 12 && 18 > hour {
+				if hour > 12 && 18 > hour {
 					so.Emit("message", "こんばんは、まだ早いですね")
-				}else if hour > 18 {
+				}else if 18 > hour {
 					so.Emit("message", "こんばんは")
 				}else if hour > 0  {
-					so.Emit("message", "こんばんは、はまだ明るいですね")
+					so.Emit("message", "こんばんは、まだ明るいですね")
 				}
 
 			} else if postMessage.MatchString("おはよう") {
 				time.LoadLocation("Asia/Tokyo")
 				hour := time.Now().Hour()
 
-				if hour < 12 && 18 > hour {
+				if hour > 12 && 18 > hour {
 					so.Emit("message", "おはようございます、朝ですか？")
-				}else if hour > 18 {
-					so.Emit("message", "おはようございます、早いですね")
+				}else if 18 > hour {
+					so.Emit("message", "おはようございます、遅いですね")
 				}else if hour > 0 {
 					so.Emit("message", "おはようございます")
 				}
@@ -77,9 +77,8 @@ func main(){
 			}else {
 				so.Emit("message", "すみませんその機能はありません")
 			}
-
-			log.Println(msg)
 		})
+
 		so.On("disconnection", func() {
 			log.Println("on disconnect")
 		})
