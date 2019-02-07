@@ -4,6 +4,9 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"time"
+	"strings"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/googollee/go-socket.io"
 )
@@ -23,11 +26,53 @@ func main(){
 
 			postMessage := regexp.MustCompile(msg)
 
-			if postMessage.MatchString("って何") {
-				so.Emit("message", "hoge")
+			if regexp.MustCompile(`て何`).MatchString(msg) {
+				req := strings.Replace(msg, `って何`, " ", 1)
+				doc, err := goquery.NewDocument("https://ja.wikipedia.org/wiki/" + req)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				selection := doc.Find("p")
+				text := selection.Text()
+
+				so.Emit("message", text + ",,,wikiより引用")
 
 			}else if postMessage.MatchString("こんにちは") {
-				so.Emit("message", "こんにちは")
+				time.LoadLocation("Asia/Tokyo")
+				hour := time.Now().Hour()
+
+				if hour < 12 && 18 > hour {
+					so.Emit("message", "こんにちは")
+				}else if hour > 18 {
+					so.Emit("message", "こんにちは, もう暗いですね")
+				}else if hour > 0 {
+					so.Emit("message", "こんにちはまだ昼じゃないですよ")
+				}
+
+			} else if postMessage.MatchString("こんばんは") {
+				time.LoadLocation("Asia/Tokyo")
+				hour := time.Now().Hour()
+
+				if hour < 12 && 18 > hour {
+					so.Emit("message", "こんばんは、まだ早いですね")
+				}else if hour > 18 {
+					so.Emit("message", "こんばんは")
+				}else if hour > 0  {
+					so.Emit("message", "こんばんは、はまだ明るいですね")
+				}
+
+			} else if postMessage.MatchString("おはよう") {
+				time.LoadLocation("Asia/Tokyo")
+				hour := time.Now().Hour()
+
+				if hour < 12 && 18 > hour {
+					so.Emit("message", "おはようございます、朝ですか？")
+				}else if hour > 18 {
+					so.Emit("message", "おはようございます、早いですね")
+				}else if hour > 0 {
+					so.Emit("message", "おはようございます")
+				}
 
 			}else {
 				so.Emit("message", "すみませんその機能はありません")

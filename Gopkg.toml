@@ -36,3 +36,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/googollee/go-socket.io"
+
+[[constraint]]
+  name = "github.com/PuerkitoBio/goquery"
+  version = "1.5.0"
