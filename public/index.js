@@ -60,7 +60,9 @@ loader.load(model,(data) => {
   scene.add(object);
 
   const child = document.getElementById('child');
+  const click = document.getElementById('click');
   const oneceButton = function(){
+    click.remove();
     helloAnime();
     speak('こんにちは');
     recognition.start();
@@ -79,7 +81,7 @@ loader.load(model,(data) => {
         anime.play();
       }
 
-    }if(msg === null){
+    }else{
       talkAnime();
       speak("すみませんエラーが起きました");
       ss.onend = () =>{
