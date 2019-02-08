@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"time"
 	"strings"
+	"strconv"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/googollee/go-socket.io"
@@ -39,42 +40,43 @@ func main(){
 				so.Emit("message", text + ",,,wikiより引用")
 
 			}else if postMessage.MatchString("こんにちは") {
-				time.LoadLocation("Asia/Tokyo")
-				hour := time.Now().Hour()
+				hour, _ := getTime()
 
 				if hour > 12 && 18 > hour {
 					so.Emit("message", "こんにちは")
-				}else if 18 > hour {
+				}else if 18 < hour {
 					so.Emit("message", "こんにちは, もう暗いですね")
 				}else if hour > 0 {
 					so.Emit("message", "こんにちはまだ昼じゃないですよ")
 				}
 
 			} else if postMessage.MatchString("こんばんは") {
-				time.LoadLocation("Asia/Tokyo")
-				hour := time.Now().Hour()
+				hour, _ := getTime()
 
 				if hour > 12 && 18 > hour {
 					so.Emit("message", "こんばんは、まだ早いですね")
-				}else if 18 > hour {
+				}else if 18 < hour {
 					so.Emit("message", "こんばんは")
 				}else if hour > 0  {
 					so.Emit("message", "こんばんは、まだ明るいですね")
 				}
 
 			} else if postMessage.MatchString("おはよう") {
-				time.LoadLocation("Asia/Tokyo")
-				hour := time.Now().Hour()
+				hour, _:= getTime()
 
 				if hour > 12 && 18 > hour {
 					so.Emit("message", "おはようございます、朝ですか？")
-				}else if 18 > hour {
+				}else if 18 < hour {
 					so.Emit("message", "おはようございます、遅いですね")
 				}else if hour > 0 {
 					so.Emit("message", "おはようございます")
 				}
 
-			}else {
+			}else if postMessage.MatchString("今何時"){
+				hour, minute := getTime()
+				so.Emit("message", "現在" + strconv.Itoa(hour) + "時" + strconv.Itoa(minute) + "分です")
+
+			}else{
 				so.Emit("message", "すみませんその機能はありません")
 			}
 		})
@@ -100,4 +102,14 @@ func main(){
 	r.Static("/public/", "./public/")
 
 	r.Run()
+}
+
+func getTime() (int, int) {
+	now := time.Now().UTC()
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	times := now.In(jst)
+	hour := times.Hour()
+	minute := times.Minute()
+
+	return hour, minute
 }
