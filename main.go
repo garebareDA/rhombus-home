@@ -76,6 +76,18 @@ func main(){
 				hour, minute := getTime()
 				so.Emit("message", "現在" + strconv.Itoa(hour) + "時" + strconv.Itoa(minute) + "分です")
 
+			}else if postMessage.MatchString("今日は何日"){
+				weeks := [...]string{"日", "月", "火", "水", "木", "金", "土"}
+
+				now := time.Now().UTC()
+				jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+				times := now.In(jst)
+
+				week := weeks[times.Weekday()]
+				var month = int (times.Month())
+				day := times.Day()
+
+				so.Emit("message","今日は" + strconv.Itoa(month) + "月" + strconv.Itoa(day) + "日" + week + "曜日です")
 			}else{
 				so.Emit("message", "すみませんその機能はありません")
 			}
